@@ -1,0 +1,299 @@
+import React from 'react';
+import {
+  CheckCircle,
+  Package,
+  MapPin,
+  Phone,
+  Calendar,
+  MessageCircle,
+  ArrowLeft,
+  Printer,
+  ShieldCheck,
+  Truck,
+  CreditCard,
+} from 'lucide-react';
+import { Order, Language } from '../../types';
+import { useShopStore } from '../../store/shopStore';
+
+interface OrderConfirmationViewProps {
+  order: Order;
+  language: Language;
+}
+
+export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({ order, language }) => {
+  const { setPageView, formatPrice } = useShopStore();
+
+  const getPaymentMethodLabel = () => {
+    switch (order.paymentMethod) {
+      case 'esewa':
+        return {
+          title: language === 'np' ? 'eSewa वालेट (सम्पन्न)' : 'Paid via eSewa Gateway',
+          sub: order.paymentDetails?.transactionId || 'Tx ID: Verified',
+          color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+        };
+      case 'khalti':
+        return {
+          title: language === 'np' ? 'Khalti वालेट (सम्पन्न)' : 'Paid via Khalti Wallet',
+          sub: order.paymentDetails?.khaltiToken || 'Token: Approved',
+          color: 'text-purple-700 bg-purple-50 border-purple-200',
+        };
+      case 'fonepay':
+        return {
+          title: language === 'np' ? 'Fonepay QR (प्रमाण पेश गरिएको)' : 'Fonepay QR (Proof Attached)',
+          sub: `Ref: ${order.paymentDetails?.fonepayProof?.referenceId || 'Verified'}`,
+          color: 'text-red-700 bg-red-50 border-red-200',
+        };
+      case 'cod':
+      default:
+        return {
+          title: language === 'np' ? 'क्यास अन डेलिभरी (Cash on Delivery)' : 'Cash on Delivery (COD)',
+          sub: language === 'np' ? 'सामान आएपछि मात्र पैसा बुझाउनुहोस्' : 'Pay in cash/QR to delivery rider upon arrival',
+          color: 'text-amber-800 bg-amber-50 border-amber-200',
+        };
+    }
+  };
+
+  const paymentInfo = getPaymentMethodLabel();
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const whatsappSupportUrl = `https://wa.me/9779801234567?text=${encodeURIComponent(
+    `🙏 Namaste Dawosti Boutique! I have placed order #${order.orderNumber}. Could you please update me on delivery dispatch?`
+  )}`;
+
+  return (
+    <div id="order-confirmation-container" className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      {/* Celebration Header */}
+      <div className="text-center space-y-3 pb-8">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto shadow-sm animate-in zoom-in-75">
+          <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12" />
+        </div>
+        <span className="inline-block px-3 py-1 bg-[#D4AF37]/15 text-[#8B3A3A] font-bold text-xs uppercase tracking-widest rounded-full">
+          {language === 'np' ? 'अर्डर पुष्टि भयो' : 'Order Confirmed'}
+        </span>
+        <h1 className="font-serif-luxury text-2xl sm:text-3xl font-bold text-[#2B1810]">
+          {language === 'np'
+            ? `धन्यवाद ${order.shippingAddress.fullName || 'user4484'}! हामीसँग किनमेल गर्नुभएकोमा धन्यवाद!`
+            : `Thank you ${order.shippingAddress.fullName || 'user4484'} for buying with us!`}
+        </h1>
+        <p className="text-xs sm:text-sm text-[#6B564C] max-w-md mx-auto">
+          {language === 'np'
+            ? `हाम्रो बुटिक टोलीले अर्डर नम्बर ${order.orderNumber} तयार गर्दैछ। डेलिभरी अघि फोन सम्पर्क गरिनेछ।`
+            : `Our atelier team in Kathmandu is preparing order #${order.orderNumber}. You will receive delivery status updates via SMS.`}
+        </p>
+      </div>
+
+      {/* Main Receipt Card */}
+      <div className="bg-white rounded-3xl border border-[#EADCCE] shadow-lg overflow-hidden">
+        
+        {/* Receipt Header Strip */}
+        <div className="bg-[#FAF2E9] px-6 py-4 border-b border-[#EADCCE] flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B564C]">
+              {language === 'np' ? 'अर्डर नम्बर' : 'Order Reference'}
+            </span>
+            <p className="font-mono text-base font-extrabold text-[#8B3A3A]">{order.orderNumber}</p>
+          </div>
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B564C]">
+              {language === 'np' ? 'मिति' : 'Date'}
+            </span>
+            <p className="text-xs font-semibold text-[#2B1810] flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5 text-[#8B3A3A]" />
+              <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrint}
+              className="px-3 py-1.5 bg-white border border-[#EADCCE] text-[#2B1810] rounded-xl text-xs font-bold hover:bg-[#FAF2E9] flex items-center gap-1.5 shadow-2xs transition-colors"
+            >
+              <Printer className="w-3.5 h-3.5 text-[#6B564C]" />
+              <span>{language === 'np' ? 'रसिद प्रिन्ट' : 'Print Receipt'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Payment & Delivery Status Banners */}
+        <div className="p-6 border-b border-[#EADCCE] grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          {/* Payment Status */}
+          <div className={`p-4 rounded-2xl border ${paymentInfo.color}`}>
+            <div className="flex items-center gap-2 mb-1">
+              <CreditCard className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase tracking-wider">
+                {language === 'np' ? 'भुक्तानी अवस्था' : 'Payment Status'}
+              </span>
+            </div>
+            <p className="font-bold text-sm">{paymentInfo.title}</p>
+            <p className="text-xs font-mono opacity-80 mt-0.5">{paymentInfo.sub}</p>
+          </div>
+
+          {/* Delivery Dispatch Info */}
+          <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-amber-900">
+            <div className="flex items-center gap-2 mb-1">
+              <Truck className="w-4 h-4 text-amber-700" />
+              <span className="text-xs font-bold uppercase tracking-wider">
+                {language === 'np' ? 'डेलिभरी समय' : 'Estimated Delivery'}
+              </span>
+            </div>
+            <p className="font-bold text-sm">
+              {order.shippingAddress.city.toLowerCase().includes('kathmandu') ||
+              order.shippingAddress.city.toLowerCase().includes('lalitpur') ||
+              order.shippingAddress.city.toLowerCase().includes('bhaktapur')
+                ? (language === 'np' ? 'काठमाडौँ उपत्यका: २४ घण्टा भित्र' : 'Kathmandu Valley: Within 24 Hours')
+                : (language === 'np' ? 'उपत्यका बाहिर: २ देखि ४ कार्यदिन' : 'Outside Valley: 2 to 4 Business Days')}
+            </p>
+            <p className="text-xs text-amber-800/80 mt-0.5">
+              {language === 'np' ? 'प्याकिङ र गुणस्तर जाँच सुरु भयो' : 'Hand-packaged with heritage care'}
+            </p>
+          </div>
+        </div>
+
+        {/* Customer & Shipping Details */}
+        <div className="p-6 border-b border-[#EADCCE] grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+          <div>
+            <h4 className="font-bold uppercase tracking-wider text-[#6B564C] mb-2 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#8B3A3A]" />
+              <span>{language === 'np' ? 'डेलिभरी ठेगाना' : 'Delivery Address'}</span>
+            </h4>
+            <p className="font-bold text-sm text-[#2B1810]">{order.shippingAddress.fullName}</p>
+            <p className="text-[#4A3B32] mt-0.5">{order.shippingAddress.addressLine}</p>
+            <p className="text-[#4A3B32]">
+              {order.shippingAddress.city}, {order.shippingAddress.province}
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-bold uppercase tracking-wider text-[#6B564C] mb-2 flex items-center gap-1.5">
+              <Phone className="w-3.5 h-3.5 text-[#8B3A3A]" />
+              <span>{language === 'np' ? 'सम्पर्क जानकारी' : 'Contact Phone'}</span>
+            </h4>
+            <p className="font-bold font-mono text-sm text-[#2B1810]">+977 {order.shippingAddress.phone}</p>
+            {order.shippingAddress.alternatePhone && (
+              <p className="text-[#6B564C] font-mono mt-0.5">
+                Alt: +977 {order.shippingAddress.alternatePhone}
+              </p>
+            )}
+            {order.notes && (
+              <p className="text-[#6B564C] italic mt-1 bg-[#FAF2E9] p-2 rounded-lg">
+                "{order.notes}"
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Order Items Table */}
+        <div className="p-6">
+          <h4 className="font-bold uppercase tracking-wider text-[#6B564C] mb-4 flex items-center gap-1.5 text-xs">
+            <Package className="w-3.5 h-3.5 text-[#8B3A3A]" />
+            <span>{language === 'np' ? 'अर्डर गरिएका सामानहरू' : 'Ordered Items'}</span>
+          </h4>
+
+          <div className="divide-y divide-[#FAF2E9] space-y-3">
+            {order.items.map((item, idx) => (
+              <div key={idx} className="pt-3 first:pt-0 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={item.product.images[0]}
+                    alt={item.product.title[language]}
+                    className="w-14 h-14 object-cover rounded-xl border border-[#EADCCE]"
+                  />
+                  <div>
+                    <p className="text-xs sm:text-sm font-bold text-[#2B1810]">
+                      {item.product.title[language]}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[11px] font-bold text-[#8B3A3A] bg-[#8B3A3A]/10 px-2 py-0.5 rounded-md">
+                        {item.selectedSize}
+                      </span>
+                      <span className="text-xs text-[#6B564C]">× {item.quantity}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="font-serif-luxury font-bold text-sm sm:text-base text-[#2B1810]">
+                    {formatPrice(item.product.price * item.quantity)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pricing Breakdown */}
+          <div className="mt-6 pt-4 border-t border-[#EADCCE] space-y-2 text-xs">
+            <div className="flex justify-between text-[#6B564C]">
+              <span>{language === 'np' ? 'सामानको रकम' : 'Subtotal'}</span>
+              <span className="font-bold font-mono text-[#2B1810]">
+                {formatPrice(order.subtotalAmount)}
+              </span>
+            </div>
+
+            {order.discountAmount > 0 && (
+              <div className="flex justify-between text-emerald-700">
+                <span>{language === 'np' ? 'छुट (Discount)' : 'Promotional Discount'}</span>
+                <span className="font-bold font-mono">-{formatPrice(order.discountAmount)}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between text-[#6B564C]">
+              <span>{language === 'np' ? 'डेलिभरी शुल्क' : 'Delivery Fee'}</span>
+              <span>
+                {order.deliveryFee === 0 ? (
+                  <span className="text-emerald-700 font-bold">
+                    {language === 'np' ? 'निःशुल्क (FREE)' : 'FREE'}
+                  </span>
+                ) : (
+                  <span className="font-mono">{formatPrice(order.deliveryFee)}</span>
+                )}
+              </span>
+            </div>
+
+            <div className="flex justify-between text-base font-bold text-[#2B1810] pt-2 border-t border-[#EADCCE]">
+              <span>{language === 'np' ? 'कुल जम्मा' : 'Grand Total'}</span>
+              <span className="text-lg font-serif-luxury text-[#8B3A3A]">
+                {formatPrice(order.totalAmount)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Actions */}
+      <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button
+          onClick={() => {
+            setPageView('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="w-full sm:w-auto px-6 py-3.5 bg-[#8B3A3A] hover:bg-[#722E2E] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>{language === 'np' ? 'थप फेसन किनमेल गर्नुहोस्' : 'Continue Shopping'}</span>
+        </button>
+
+        <a
+          href={whatsappSupportUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full sm:w-auto px-6 py-3.5 bg-[#25D366] hover:bg-[#1EBE5B] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98"
+        >
+          <MessageCircle className="w-4 h-4 fill-white" />
+          <span>{language === 'np' ? 'व्हाट्सएपमा बुझ्न' : 'WhatsApp Atelier Support'}</span>
+        </a>
+      </div>
+
+      {/* Security Footer Guarantee */}
+      <div className="text-center pt-8 text-[11px] text-[#6B564C] flex items-center justify-center gap-2">
+        <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+        <span>
+          {language === 'np'
+            ? 'Dawosti बुटिक • न्यूरोड काठमाडौँ • १००% मौलिक नेपाली परिधान'
+            : 'Dawosti Boutique Kathmandu • 100% Authentic Nepali Craftsmanship'}
+        </span>
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-primary: #8B3A3A;
+    --color-primary-hover: #722E2E;
+    --color-primary-dark: #561F1F;
+    --color-accent: #D4AF37;
+    --color-accent-hover: #BFA030;
+    --color-accent-light: #F3E5AB;
+    --color-cream: #FFF8F0;
+    --color-cream-muted: #FAF2E9;
+    --color-text-main: #2B1810;
+    --color-text-muted: #6B564C;
+    --color-border-subtle: #EADCCE;
+  }
+
+  html {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+    scroll-behavior: smooth;
+    background-color: #FFF8F0;
+    color: #2B1810;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #FFF8F0;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #D4AF37;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8B3A3A;
+  }
+}
+
+.font-serif-luxury {
+  font-family: 'Marcellus', 'Cinzel', Georgia, serif;
+}
+
+.font-devanagari {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+}
+
+/* Subtle traditional Nepali Dhaka geometric border effect */
+.dhaka-pattern-border {
+  background-image: radial-gradient(#D4AF37 0.75px, transparent 0.75px), radial-gradient(#8B3A3A 0.75px, #FFF8F0 0.75px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
