@@ -1,1 +1,2 @@
-/* /index.html 200
+# SPA fallback is configured in wrangler.jsonc.
+# Do not add a /* /index.html 200 redirect here; it conflicts with Cloudflare Workers Assets.
