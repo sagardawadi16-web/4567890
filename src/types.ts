@@ -284,7 +284,7 @@ export interface MaintenanceSettings {
   warningDurationMinutes: number; // Duration in minutes (default 10)
   messageEn?: string;
   messageNp?: string;
-  emergencyPhone: string; // '970825194'
+  emergencyPhone: string; // '9708251494'
   lastUpdatedBy: string; // e.g. 'Head Admin' or agent ID
   lastUpdatedAt: string;
 }

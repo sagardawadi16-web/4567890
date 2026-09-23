@@ -32,7 +32,7 @@ export const MaintenanceBanner: React.FC = () => {
     return null;
   }
 
-  const phone = maintenanceSettings.emergencyPhone || '970825194';
+  const phone = maintenanceSettings.emergencyPhone || '9708251494';
 
   return (
     <div

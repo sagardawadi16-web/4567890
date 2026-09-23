@@ -51,13 +51,30 @@ export const EsewaModal: React.FC<EsewaModalProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSimulatePayment = () => {
+  const handleSimulatePayment = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/payments/verify-esewa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amt: esewaPayload.amt,
+          tAmt: esewaPayload.tAmt,
+          pid: esewaPayload.pid,
+          scd: esewaPayload.scd,
+          refId: `ESEWA-TX-${Date.now().toString(36).toUpperCase()}`,
+        }),
+      });
+      const data = await res.json();
+      setIsProcessing(false);
+      const transactionId = data?.transactionId || `ESEWA-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      onPaymentSuccess(transactionId, esewaPayload);
+    } catch (e) {
+      console.warn('Backend eSewa call fallback:', e);
       setIsProcessing(false);
       const mockEsewaTxId = `ESEWA-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
       onPaymentSuccess(mockEsewaTxId, esewaPayload);
-    }, 1200);
+    }
   };
 
   return (

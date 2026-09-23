@@ -821,7 +821,7 @@ export const defaultMerchantSettings: MerchantSettings = {
   staticQrImage: DEFAULT_STATIC_FONEPAY_QR_SVG,
   merchantName: 'DAWOSTI KATHMANDU BOUTIQUE',
   merchantPan: '609124819',
-  merchantPhone: '+977 970825194',
+  merchantPhone: '+977 9708251494',
   bankName: 'NIC Asia Bank Ltd.',
   accountNumber: '0192847192837001',
   qrInstructionsEn: 'Scan this official Merchant QR via any Nepali bank mobile banking app (NIC Asia, Nabil, Global IME, Everest, Sanima, eSewa, Khalti), enter the exact bill amount, and attach your reference ID & receipt screenshot.',

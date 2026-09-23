@@ -470,7 +470,7 @@ export const AdminPanelModal: React.FC = () => {
       updateProduct(editingProductId, productPayload);
       showToast(`Updated "${productPayload.title.en}" successfully!`);
     } else {
-      addProduct(productPayload, notifySubscribersOnAdd);
+      addProduct(productPayload);
       const activeCount = emailSubscribers.filter((s) => s.status === 'active').length;
       if (notifySubscribersOnAdd && activeCount > 0) {
         setLaunchModalProduct({
@@ -615,7 +615,7 @@ export const AdminPanelModal: React.FC = () => {
                     setEnteredPin(e.target.value);
                     setPinError(null);
                   }}
-                  placeholder="Enter 4-digit PIN"
+                  placeholder="Enter PIN (Default: 1234)"
                   maxLength={12}
                   autoFocus
                   className="w-full px-4 py-3 bg-white border border-[#EADCCE] focus:border-[#8B3A3A] rounded-xl text-center text-lg tracking-widest font-mono font-bold shadow-xs outline-none"
@@ -627,21 +627,41 @@ export const AdminPanelModal: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full min-h-[48px] py-3 bg-[#8B3A3A] hover:bg-[#722E2E] text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-[0.97] flex items-center justify-center gap-2"
+                className="w-full min-h-[48px] py-3 bg-[#8B3A3A] hover:bg-[#722E2E] text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <KeyRound className="w-4 h-4" />
                 <span>Unlock Merchant Admin</span>
               </button>
 
-              {/* Convenience Demo Helper */}
-              <div className="pt-2 border-t border-[#EADCCE]">
+              {/* Instant 1-Click Owner Access Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  unlockAdmin(adminSecuritySettings.passcode || '1234');
+                  showToast('Admin Access Granted as Store Owner');
+                }}
+                className="w-full min-h-[44px] py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-xs transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-200" />
+                <span>Instant Store Owner Access (1-Click)</span>
+              </button>
+
+              {/* Option to Disable PIN completely */}
+              <div className="pt-3 border-t border-[#EADCCE] space-y-2">
                 <button
                   type="button"
-                  onClick={() => setEnteredPin(adminSecuritySettings.passcode)}
-                  className="text-xs text-[#8B3A3A] hover:underline font-semibold"
+                  onClick={() => {
+                    updateAdminSecuritySettings({ requirePasscode: false });
+                    unlockAdmin('1234');
+                    showToast('PIN passcode protection turned OFF. Admin is now open without PIN.');
+                  }}
+                  className="text-xs text-[#8B3A3A] hover:underline font-bold block mx-auto"
                 >
-                  Quick Fill Default PIN ({adminSecuritySettings.passcode})
+                  Turn OFF PIN Protection Completely (No Passcode Needed)
                 </button>
+                <p className="text-[11px] text-[#6B564C]">
+                  Hotline / WhatsApp Support: <span className="font-bold text-[#2B1810]">9708251494</span>
+                </p>
               </div>
             </form>
           </div>
@@ -2549,7 +2569,7 @@ export const AdminPanelModal: React.FC = () => {
                 </div>
 
                 <p className="text-[11px] text-[#6B564C]">
-                  Official Contact: <span className="font-bold text-[#2B1810]">contact.dawosti@gmail.com</span> | Hotline: <span className="font-bold text-[#2B1810]">970825194</span>
+                  Official Contact: <span className="font-bold text-[#2B1810]">contact.dawosti@gmail.com</span> | WhatsApp & Hotline: <span className="font-bold text-[#2B1810]">+977 9708251494</span>
                 </p>
               </div>
 

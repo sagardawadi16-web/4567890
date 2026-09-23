@@ -31,7 +31,7 @@ export const MultiAgentMaintenanceTab: React.FC = () => {
 
   const [testPingNotice, setTestPingNotice] = useState<string | null>(null);
   const [customPhone, setCustomPhone] = useState<string>(
-    maintenanceSettings.emergencyPhone || '970825194'
+    maintenanceSettings.emergencyPhone || '9708251494'
   );
   const [customMsgEn, setCustomMsgEn] = useState<string>(maintenanceSettings.messageEn || '');
   const [customMsgNp, setCustomMsgNp] = useState<string>(maintenanceSettings.messageNp || '');
@@ -39,7 +39,7 @@ export const MultiAgentMaintenanceTab: React.FC = () => {
 
   const handleSaveContactAndMessages = () => {
     updateMaintenanceSettings({
-      emergencyPhone: customPhone.trim() || '970825194',
+      emergencyPhone: customPhone.trim() || '9708251494',
       messageEn: customMsgEn.trim() || undefined,
       messageNp: customMsgNp.trim() || undefined,
     });
@@ -306,7 +306,7 @@ export const MultiAgentMaintenanceTab: React.FC = () => {
               type="text"
               value={customPhone}
               onChange={(e) => setCustomPhone(e.target.value)}
-              placeholder="970825194"
+              placeholder="9708251494"
               className="w-full px-3 py-2 border border-[#EADCCE] rounded-xl text-xs bg-[#FAF2E9] text-[#2B1810] font-mono font-bold focus:outline-none focus:ring-1 focus:ring-[#8B3A3A]"
             />
             <span className="text-[10px] text-[#6B564C] mt-1 block">

@@ -167,7 +167,7 @@ export const SubscribersEmailDropsTab: React.FC = () => {
               contact.dawosti@gmail.com
             </div>
             <div className="text-[11px] font-semibold text-[#6B564C]">
-              Official Sender & Hotline: 970825194
+              Official Sender & Hotline: 9708251494
             </div>
           </div>
         </div>
@@ -229,7 +229,7 @@ export const SubscribersEmailDropsTab: React.FC = () => {
             >
               {products.map((prod) => (
                 <option key={prod.id} value={prod.id}>
-                  {prod.title.en} — {formatPrice(prod.price)} ({prod.category})
+                  {prod.title.en} — {formatPrice(prod.price)} ({prod.categoryId})
                 </option>
               ))}
             </select>
@@ -334,7 +334,7 @@ export const SubscribersEmailDropsTab: React.FC = () => {
                 </div>
 
                 <p className="text-xs text-[#6B564C]">
-                  Direct inquiries & orders: WhatsApp / Call <span className="font-bold text-[#2B1810]">+977 970825194</span> or email <span className="font-bold text-[#2B1810]">contact.dawosti@gmail.com</span>
+                  Direct inquiries & orders: WhatsApp / Call <span className="font-bold text-[#2B1810]">+977 9708251494</span> or email <span className="font-bold text-[#2B1810]">contact.dawosti@gmail.com</span>
                 </p>
               </div>
             </div>

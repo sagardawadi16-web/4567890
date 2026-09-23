@@ -69,7 +69,7 @@ export const OrderConfirmationView: React.FC<OrderConfirmationViewProps> = ({ or
     window.print();
   };
 
-  const whatsappSupportUrl = `https://wa.me/9779801234567?text=${encodeURIComponent(
+  const whatsappSupportUrl = `https://wa.me/9779708251494?text=${encodeURIComponent(
     `🙏 Namaste Dawosti Boutique! I have placed order #${order.orderNumber}. Could you please update me on delivery dispatch?`
   )}`;
 

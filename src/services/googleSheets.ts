@@ -37,7 +37,7 @@ export const saveSheetId = (id: string) => {
 /**
  * Creates or updates a comprehensive All-In-One Google Sheet containing:
  * 1. Orders (with PENDING status and realistic packaging notes)
- * 2. StoreAlerts (Updateable announcement bar, festive theme, WhatsApp contact number 970825194)
+ * 2. StoreAlerts (Updateable announcement bar, festive theme, WhatsApp contact number 9708251494)
  * 3. Products & Stock (Live inventory and pricing)
  */
 export const syncAllInOneGoogleSheet = async ({
@@ -45,7 +45,7 @@ export const syncAllInOneGoogleSheet = async ({
   products,
   siteContent,
   themeSettings,
-  contactPhone = '970825194',
+  contactPhone = '9708251494',
 }: {
   orders: Order[];
   products: Product[];
@@ -217,15 +217,15 @@ export const syncAllInOneGoogleSheet = async ({
       ],
       [
         'contact_whatsapp_phone',
-        contactPhone || '970825194',
-        contactPhone || '970825194',
+        contactPhone || '9708251494',
+        contactPhone || '9708251494',
         'TRUE',
-        'Official WhatsApp phone number (e.g. 970825194)',
+        'Official WhatsApp phone number (e.g. 9708251494)',
       ],
       [
         'contact_helpline',
-        `+977 ${contactPhone || '970825194'}`,
-        `+977 ${contactPhone || '970825194'}`,
+        `+977 ${contactPhone || '9708251494'}`,
+        `+977 ${contactPhone || '9708251494'}`,
         'TRUE',
         'Customer care phone displayed on footer and top announcement bar',
       ],
@@ -494,7 +494,7 @@ export const syncOrdersToGoogleSheet = async (
     products: [],
     siteContent: defaultSiteContent,
     themeSettings: defaultThemeSettings,
-    contactPhone: '970825194',
+    contactPhone: '9708251494',
   });
 };
 

@@ -43,7 +43,7 @@ ${product.description.np ? `नेपालीमा: ${product.description.np}\
 ${storeUrl}#product-${product.id}
 
 For instant inquiries or direct phone/WhatsApp order:
-📞 +977 970825194
+📞 +977 9708251494
 ✉️ contact.dawosti@gmail.com
 
 Warm regards,
@@ -124,7 +124,7 @@ Opposite Bishal Bazar, New Road, Kathmandu`;
           <tr>
             <td style="background-color: #F8EFE4; padding: 24px 32px; border-top: 1px solid #EADCCE; text-align: center; color: #6B564C; font-size: 12px; line-height: 1.6;">
               <p style="margin: 0 0 8px 0; font-weight: bold; color: #2B1810;">DAWOSTI Boutique Kathmandu</p>
-              <p style="margin: 0 0 8px 0;">New Road (Opposite Bishal Bazar), Kathmandu | WhatsApp: +977 970825194</p>
+              <p style="margin: 0 0 8px 0;">New Road (Opposite Bishal Bazar), Kathmandu | WhatsApp: +977 9708251494</p>
               <p style="margin: 0; color: #9E897E;">You are receiving this because you subscribed to new drop alerts at DAWOSTI.</p>
             </td>
           </tr>

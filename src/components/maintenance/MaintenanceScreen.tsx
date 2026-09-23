@@ -17,7 +17,7 @@ export const MaintenanceScreen: React.FC = () => {
   const [passcode, setPasscode] = useState<string>('');
   const [passcodeError, setPasscodeError] = useState<string | null>(null);
 
-  const phone = maintenanceSettings.emergencyPhone || '970825194';
+  const phone = maintenanceSettings.emergencyPhone || '9708251494';
 
   const handleAdminUnlock = (e: React.FormEvent) => {
     e.preventDefault();

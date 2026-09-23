@@ -23,6 +23,11 @@ import { KhaltiModal } from '../components/checkout/KhaltiModal';
 import { FonepayModal } from '../components/checkout/FonepayModal';
 import { OrderConfirmationView } from '../components/checkout/OrderConfirmationView';
 import { NEPAL_PROVINCES, NepalProvince, NepalCity } from '../data/nepalLocations';
+import {
+  verifyEsewaWithBackend,
+  verifyKhaltiWithBackend,
+  verifyFonepayWithBackend,
+} from '../services/apiBackend';
 
 export const CheckoutPage: React.FC = () => {
   const {
@@ -178,8 +183,13 @@ export const CheckoutPage: React.FC = () => {
   };
 
   // Payment Callbacks
-  const handleEsewaSuccess = (transactionId: string, payload: EsewaPayload) => {
+  const handleEsewaSuccess = async (transactionId: string, payload: EsewaPayload) => {
     setIsEsewaModalOpen(false);
+    // Asynchronously notify express backend
+    verifyEsewaWithBackend(generatedOrderRef, payload, totalPayable).catch((e) =>
+      console.warn('Backend eSewa call:', e)
+    );
+
     placeOrder({
       orderNumber: generatedOrderRef,
       shippingAddress: getShippingAddress(),
@@ -196,8 +206,13 @@ export const CheckoutPage: React.FC = () => {
     });
   };
 
-  const handleKhaltiSuccess = (result: KhaltiPaymentResult) => {
+  const handleKhaltiSuccess = async (result: KhaltiPaymentResult) => {
     setIsKhaltiModalOpen(false);
+    // Asynchronously notify express backend
+    verifyKhaltiWithBackend(generatedOrderRef, result, totalPayable).catch((e) =>
+      console.warn('Backend Khalti call:', e)
+    );
+
     placeOrder({
       orderNumber: generatedOrderRef,
       shippingAddress: getShippingAddress(),
@@ -214,8 +229,13 @@ export const CheckoutPage: React.FC = () => {
     });
   };
 
-  const handleFonepaySuccess = (proof: FonepayProof) => {
+  const handleFonepaySuccess = async (proof: FonepayProof) => {
     setIsFonepayModalOpen(false);
+    // Asynchronously notify express backend
+    verifyFonepayWithBackend(generatedOrderRef, proof, totalPayable).catch((e) =>
+      console.warn('Backend Fonepay call:', e)
+    );
+
     placeOrder({
       orderNumber: generatedOrderRef,
       shippingAddress: getShippingAddress(),
@@ -918,9 +938,9 @@ export const CheckoutPage: React.FC = () => {
               {/* Secondary WhatsApp Fallback */}
               <div className="text-center pt-2">
                 <a
-                  href={`https://wa.me/977970825194?text=${encodeURIComponent(
+                  href={`https://wa.me/9779708251494?text=${encodeURIComponent(
                     `🙏 *Namaste DAWOSTI Boutique Kathmandu!*
-📞 Helpline: +977 970825194
+📞 Helpline: +977 9708251494
 
 🇬🇧 *English:*
 Hi, I need help with checkout. My name is ${fullName || 'Customer'}. Total payable is ${formatPrice(totalPayable)}. Please guide me!
@@ -933,7 +953,7 @@ Hi, I need help with checkout. My name is ${fullName || 'Customer'}. Total payab
                   className="text-xs text-[#25D366] hover:underline font-bold inline-flex items-center gap-1.5"
                 >
                   <MessageCircle className="w-3.5 h-3.5 fill-[#25D366]" />
-                  <span>{language === 'np' ? 'व्हाट्सएप (९७०८२५१९४) बाट अर्डर सहायता लिनुहोस्' : 'Need help? WhatsApp Guide (+977 970825194)'}</span>
+                  <span>{language === 'np' ? 'व्हाट्सएप (९७०८२५१४९४) बाट अर्डर सहायता लिनुहोस्' : 'Need help? WhatsApp Guide (+977 9708251494)'}</span>
                 </a>
               </div>
 

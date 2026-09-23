@@ -223,19 +223,21 @@ export const MobileNavOverlay: React.FC = () => {
               <ChevronRight className="w-4 h-4 text-[#8B3A3A]" />
             </button>
 
-            {/* Merchant Admin shortcut for testing */}
+            {/* Store Admin Atelier shortcut */}
             <button
               id="mobile-drawer-admin-btn"
               onClick={handleOpenAdmin}
-              className="w-full min-h-[44px] flex items-center justify-between p-2.5 px-3 rounded-xl bg-white border border-[#EADCCE] text-[#6B564C] hover:text-[#8B3A3A] transition-all active:scale-[0.97]"
+              className="w-full min-h-[46px] flex items-center justify-between p-2.5 px-3 rounded-xl bg-[#8B3A3A]/10 border border-[#8B3A3A]/30 text-[#8B3A3A] hover:bg-[#8B3A3A] hover:text-white transition-all active:scale-[0.97]"
             >
               <div className="flex items-center gap-2">
-                <Settings className="w-4 h-4 text-[#8B3A3A]" />
-                <span className="text-xs font-semibold">
-                  {language === 'np' ? 'मर्चेन्ट QR व्यवस्थापन' : 'Merchant QR Settings'}
+                <Settings className="w-4 h-4" />
+                <span className="text-xs font-bold">
+                  {language === 'np' ? 'व्यवस्थापक प्यानल (Admin Atelier)' : 'Admin Atelier (Store Management)'}
                 </span>
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-[#6B564C]" />
+              <span className="text-[10px] bg-[#8B3A3A] text-white px-2 py-0.5 rounded-full font-bold">
+                Admin
+              </span>
             </button>
           </div>
         </div>
@@ -258,7 +260,20 @@ export const MobileNavOverlay: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <Phone className="w-3.5 h-3.5 text-[#8B3A3A] shrink-0" />
-              <span>+977 01-4422990 / +977 9801234567</span>
+              <a href="tel:+9779708251494" className="font-bold text-[#2B1810] hover:underline">
+                +977 9708251494
+              </a>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs">💬</span>
+              <a
+                href="https://wa.me/9779708251494"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-[#25D366] hover:underline"
+              >
+                WhatsApp: +977 9708251494
+              </a>
             </div>
             <div className="flex items-center gap-2">
               <Truck className="w-3.5 h-3.5 text-[#8B3A3A] shrink-0" />

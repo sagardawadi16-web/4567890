@@ -112,8 +112,19 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                <a href="tel:+977970825194" className="hover:text-white transition-colors">
-                  +977 970825194
+                <a href="tel:+9779708251494" className="hover:text-white transition-colors">
+                  +977 9708251494
+                </a>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 text-[#25D366] shrink-0 flex items-center justify-center font-bold text-xs">💬</span>
+                <a
+                  href="https://wa.me/9779708251494?text=Namaste%20Dawosti%20Boutique%2C%20I%20have%20an%20inquiry%20about%20your%20collection"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#25D366] text-[#FFF8F0] font-medium transition-colors"
+                >
+                  WhatsApp: +977 9708251494
                 </a>
               </div>
               <div className="flex items-center gap-2">

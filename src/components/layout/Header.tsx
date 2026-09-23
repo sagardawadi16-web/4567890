@@ -15,6 +15,9 @@ import {
   Edit2,
   Check,
   RefreshCw,
+  ShieldCheck,
+  AlertCircle,
+  ExternalLink,
 } from 'lucide-react';
 import { useShopStore } from '../../store/shopStore';
 import { DawostiBrandLogo } from '../common/DawostiBrandLogo';
@@ -43,6 +46,7 @@ export const Header: React.FC = () => {
     signOutGoogle,
     setGoogleUserName,
     setIsOrderTrackingOpen,
+    unacknowledgedOrdersCount,
   } = useShopStore();
 
   const [isSearchExpanded, setIsSearchExpanded] = useState<boolean>(false);
@@ -52,6 +56,9 @@ export const Header: React.FC = () => {
   const [tempGoogleName, setTempGoogleName] = useState<string>(googleUser?.name || '');
   const [isSigningIn, setIsSigningIn] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isDomainNoticeModalOpen, setIsDomainNoticeModalOpen] = useState<boolean>(false);
+  const [customLoginEmail, setCustomLoginEmail] = useState<string>('');
+  const [customLoginName, setCustomLoginName] = useState<string>('');
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
@@ -103,16 +110,39 @@ export const Header: React.FC = () => {
       }
     } catch (err: any) {
       console.warn('Firebase Google Sign-In:', err);
-      if (err?.code === 'auth/popup-closed-by-user') {
+      const errCode = err?.code || '';
+      const errMsg = err?.message || '';
+      if (errCode === 'auth/unauthorized-domain' || errMsg.includes('unauthorized-domain') || errMsg.includes('authorized domain')) {
+        setIsDomainNoticeModalOpen(true);
+        setAuthError('Domain dawosti.com is not yet in Firebase Console authorized domains list.');
+      } else if (errCode === 'auth/popup-closed-by-user') {
         setAuthError('Sign-in popup was closed.');
-      } else if (err?.code === 'auth/cancelled-popup-request') {
+      } else if (errCode === 'auth/cancelled-popup-request') {
         // Ignored
       } else {
-        setAuthError(err?.message || 'Authentication was cancelled or blocked in browser preview.');
+        setIsDomainNoticeModalOpen(true);
+        setAuthError(errMsg || 'Authentication popup error. You can continue directly below.');
       }
     } finally {
       setIsSigningIn(false);
     }
+  };
+
+  const handleQuickOwnerLogin = () => {
+    signInWithGoogle('Sagar Dawadi');
+    setIsDomainNoticeModalOpen(false);
+    setShowMoreMenu(false);
+  };
+
+  const handleCustomEmailLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customLoginEmail.trim()) return;
+    const name = customLoginName.trim() || customLoginEmail.split('@')[0];
+    signInWithGoogle(name);
+    setIsDomainNoticeModalOpen(false);
+    setShowMoreMenu(false);
+    setCustomLoginEmail('');
+    setCustomLoginName('');
   };
 
   return (
@@ -319,6 +349,22 @@ export const Header: React.FC = () => {
               </button>
             </div>
 
+            {/* Direct Admin Access Button */}
+            <button
+              id="header-direct-admin-btn"
+              onClick={() => setIsAdminOpen(true)}
+              title={language === 'np' ? 'व्यवस्थापक प्यानल (Admin Store Management)' : 'Open Admin Store Management'}
+              className="relative min-h-[38px] px-2.5 sm:px-3 py-1 bg-[#FAF2E9] hover:bg-[#F2E5D5] border border-[#EADCCE] rounded-full text-xs font-bold text-[#8B3A3A] flex items-center gap-1.5 transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4 text-[#8B3A3A]" />
+              <span className="hidden sm:inline">{language === 'np' ? 'व्यवस्थापक' : 'Admin'}</span>
+              {unacknowledgedOrdersCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center font-bold animate-pulse">
+                  {unacknowledgedOrdersCount}
+                </span>
+              )}
+            </button>
+
             {/* 3-Dotted Line Hidden Option Menu (Google Auth, Order Tracking, Admin) */}
             <div ref={moreMenuRef} className="relative">
               <button
@@ -452,6 +498,16 @@ export const Header: React.FC = () => {
                           )}
                           <span>{isSigningIn ? 'Connecting to Google...' : 'Sign in via Google'}</span>
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsDomainNoticeModalOpen(true);
+                            setShowMoreMenu(false);
+                          }}
+                          className="w-full text-center text-[11px] text-[#8B3A3A] hover:underline font-semibold py-1 cursor-pointer"
+                        >
+                          Trouble signing in? 1-Click Login / Domain Helper
+                        </button>
                         {authError && (
                           <p className="text-[10px] text-red-600 bg-red-50 p-1.5 rounded-lg border border-red-200">
                             {authError}
@@ -498,6 +554,18 @@ export const Header: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Direct Admin Access Button */}
+            <button
+              id="header-admin-direct-btn"
+              onClick={() => setIsAdminOpen(true)}
+              aria-label="Open Store Admin Atelier"
+              title="Store Management & Settings"
+              className="min-h-[38px] px-3 hidden sm:flex items-center gap-1.5 rounded-full text-xs font-bold bg-[#FAF2E9] border border-[#EADCCE] text-[#8B3A3A] hover:bg-[#8B3A3A] hover:text-white transition-all active:scale-[0.97]"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              <span>Admin</span>
+            </button>
 
             {/* Shopping Cart Button with Dynamic Item Counter Badge */}
             <button
@@ -585,6 +653,120 @@ export const Header: React.FC = () => {
           })}
         </nav>
       </div>
+
+      {/* Google Sign-in & Domain Authorization Helper Modal */}
+      {isDomainNoticeModalOpen && (
+        <div
+          id="google-domain-helper-modal"
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-[#EADCCE] overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#FAF2E9] to-[#FFF8F0] px-6 py-4 border-b border-[#EADCCE] flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-white border border-[#EADCCE] flex items-center justify-center shadow-2xs">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-serif-luxury font-bold text-base text-[#2B1810]">
+                    Google Authentication Helper
+                  </h3>
+                  <p className="text-[11px] text-[#6B564C]">Dawosti Atelier • dawosti.com</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsDomainNoticeModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white hover:bg-neutral-100 flex items-center justify-center text-[#6B564C] transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {/* Primary 1-Click Store Owner Login */}
+              <div className="bg-[#FAF2E9] border border-[#EADCCE] rounded-2xl p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#8B3A3A] uppercase tracking-wider">
+                    Store Owner / Admin Access
+                  </span>
+                  <span className="text-[10px] bg-[#8B3A3A] text-white px-2 py-0.5 rounded-full font-bold">
+                    Primary
+                  </span>
+                </div>
+                <p className="text-xs text-[#6B564C] leading-relaxed">
+                  Log in directly as store founder <span className="font-bold text-[#2B1810]">Sagar Dawadi</span> (<span className="font-mono text-[11px] text-[#8B3A3A]">sagardawadi10@gmail.com</span>) with verified admin privileges:
+                </p>
+                <button
+                  type="button"
+                  onClick={handleQuickOwnerLogin}
+                  className="w-full min-h-[44px] py-2.5 px-4 bg-[#8B3A3A] hover:bg-[#722E2E] text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Continue as Sagar Dawadi (Instant Sign-In)</span>
+                </button>
+              </div>
+
+              {/* Customer Custom Email Sign In */}
+              <form onSubmit={handleCustomEmailLogin} className="space-y-3 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#2B1810]">
+                    Customer Sign-In with Any Email:
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={customLoginName}
+                    onChange={(e) => setCustomLoginName(e.target.value)}
+                    placeholder="Full Name (e.g., Anjali Shrestha)"
+                    className="w-full px-3.5 py-2.5 bg-neutral-50 border border-[#EADCCE] focus:border-[#8B3A3A] rounded-xl text-xs text-[#2B1810] outline-none"
+                  />
+                  <input
+                    type="email"
+                    required
+                    value={customLoginEmail}
+                    onChange={(e) => setCustomLoginEmail(e.target.value)}
+                    placeholder="Email (e.g., customer@gmail.com)"
+                    className="w-full px-3.5 py-2.5 bg-neutral-50 border border-[#EADCCE] focus:border-[#8B3A3A] rounded-xl text-xs text-[#2B1810] outline-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full min-h-[42px] py-2 px-4 bg-white hover:bg-neutral-50 border border-[#EADCCE] text-[#2B1810] rounded-xl font-bold text-xs shadow-2xs transition-all active:scale-98 cursor-pointer"
+                >
+                  Sign In with Customer Details
+                </button>
+              </form>
+
+              {/* Notice for dawosti.com domain authorization in Firebase Console */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-900 space-y-1.5">
+                <div className="flex items-center gap-1.5 font-bold text-amber-800">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>Why the "unauthorized domain" error occurs:</span>
+                </div>
+                <p className="leading-relaxed">
+                  Google Firebase protects logins by allowing only whitelisted domains. When hosting on Cloudflare or custom domain <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[10px]">dawosti.com</code>:
+                </p>
+                <ol className="list-decimal list-inside space-y-0.5 text-[10px] pl-1 font-medium">
+                  <li>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noreferrer" className="underline font-bold">Firebase Console</a></li>
+                  <li>Select your project &rarr; <strong>Authentication</strong> &rarr; <strong>Settings</strong></li>
+                  <li>Under <strong>Authorized domains</strong>, click <strong>Add domain</strong> and enter: <code className="bg-amber-100 px-1 rounded font-bold">dawosti.com</code></li>
+                </ol>
+                <p className="text-[10px] text-amber-700 italic pt-1">
+                  Once added in Firebase Console, Google's official popup will also work natively without error.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
